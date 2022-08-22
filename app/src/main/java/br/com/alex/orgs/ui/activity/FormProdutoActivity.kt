@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import br.com.alex.orgs.R
+import br.com.alex.orgs.dao.ProdutoDao
 import br.com.alex.orgs.model.Produto
 import java.math.BigDecimal
 
@@ -24,18 +25,22 @@ class FormProdutoActivity :
             val descricao = campoDescricao.text.toString()
             var campoValor = findViewById<EditText>(R.id.valor)
             val valorEmTexto = campoValor.text.toString()
-            val valor = if(valorEmTexto.isBlank()){
-                 BigDecimal.ZERO
-             }else{
-                 BigDecimal(valorEmTexto)
-             }
+            val valor = if (valorEmTexto.isBlank()) {
+                BigDecimal.ZERO
+            } else {
+                BigDecimal(valorEmTexto)
+            }
             val produtoNovo = Produto(
-                nome=nome,
-                descricao=descricao,
-                valor=valor
+                nome = nome,
+                descricao = descricao,
+                valor = valor
             )
 
-            Log.i("FormProdutoActivity", "onCreate: $produtoNovo") // <- Teste Logcat
+            Log.i("FormProdutoActivity", "onCreate: $produtoNovo")
+            val dao = ProdutoDao()
+            dao.adicionar(produtoNovo)
+            Log.i("FormProdutoActivity", "onCreate: ${dao.buscaTodos()}") // <- Teste Logcat
+            finish()
         }
 
     }
