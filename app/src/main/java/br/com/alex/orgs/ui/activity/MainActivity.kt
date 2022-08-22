@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         fab.setOnClickListener{
             val intent = Intent(this, FormProdutoActivity::class.java)
             startActivity(intent)
+
         }
     }
 }
