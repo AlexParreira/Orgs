@@ -8,13 +8,18 @@ import br.com.alex.orgs.R
 import br.com.alex.orgs.dao.ProdutoDao
 import br.com.alex.orgs.model.Produto
 import java.math.BigDecimal
+import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
 
-class FormProdutoActivity :
-    AppCompatActivity(R.layout.activity_form_produto) {
+class FormProdutoActivity : AppCompatActivity() {
+
+    private val binding by lazy {
+        ActivityFormProdutoBinding.inflate(layoutInflater)
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContentView(binding.root)
         configuraBotaoSalvar()
 
     }
