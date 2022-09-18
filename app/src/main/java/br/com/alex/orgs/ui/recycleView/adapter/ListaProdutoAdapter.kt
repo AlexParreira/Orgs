@@ -1,14 +1,18 @@
 package br.com.alex.orgs.ui.recycleView.adapter
 
 import android.content.Context
+import android.icu.text.NumberFormat
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alex.orgs.R
 import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.databinding.ProdutoItemBinding
+import java.util.*
 
 class ListaProdutoAdapter(
     private val context: Context,
@@ -17,14 +21,19 @@ class ListaProdutoAdapter(
 
     private val produtos = produtos.toMutableList()
 
-    class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ProdutoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @RequiresApi(Build.VERSION_CODES.N)
         fun vincula(produto: Produto) {
-            val nome = itemView.findViewById<TextView>(R.id.produto_item_nome)
+            val nome = binding.produtoItemNome
             nome.text = produto.nome
-            val descricao = itemView.findViewById<TextView>(R.id.produto_item_descricao)
+            val descricao = binding.produtoItemDescricao
             descricao.text =  produto.descricao
-            val valor =  itemView.findViewById<TextView>(R.id.produto_item_valor)
-            valor.text = produto.valor.toPlainString()
+            val valor =  binding.produtoItemValor
+            val formatador: NumberFormat = NumberFormat
+                .getCurrencyInstance(Locale("pt","br"))
+            val valorEmMoeda = formatador.format(produto.valor)
+            valor.text = valorEmMoeda
         }
     }
 
