@@ -23,7 +23,7 @@ tools:context=".ui.activity.FormProdutoActivity">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cesta_de_frutas" />
+        app:srcCompat="@drawable/imagem_padrao" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/form_produto_textinputlayout_nome"
         android:layout_width="0dp"
@@ -39,6 +39,7 @@ tools:context=".ui.activity.FormProdutoActivity">
             android:id="@+id/activity_form_produto_nome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:hint="Nome" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,6 +58,7 @@ tools:context=".ui.activity.FormProdutoActivity">
             android:id="@+id/activity_form_produto_descricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:hint="Descrição" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -74,6 +76,7 @@ tools:context=".ui.activity.FormProdutoActivity">
             android:id="@+id/activity_form_produto_valor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
             android:hint="Valor" />
     </com.google.android.material.textfield.TextInputLayout>
     <Button android:id="@+id/activity_form_produto_botao_salvar"
