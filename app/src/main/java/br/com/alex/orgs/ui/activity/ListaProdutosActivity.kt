@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.alex.orgs.R
 import br.com.alex.orgs.dao.ProdutoDao
 import br.com.alex.orgs.databinding.ActivityListaProdutosBinding
+import br.com.alex.orgs.databinding.FormularioImagemBinding
 import br.com.alex.orgs.ui.recycleView.adapter.ListaProdutoAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -27,7 +28,6 @@ class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos
         configuraFab()
 
     }
-
     override fun onResume() {
         super.onResume()
         adapter.atualiza(dao.buscaTodos())

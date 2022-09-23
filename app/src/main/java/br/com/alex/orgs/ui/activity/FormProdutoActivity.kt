@@ -10,6 +10,8 @@ import br.com.alex.orgs.dao.ProdutoDao
 import br.com.alex.orgs.model.Produto
 import java.math.BigDecimal
 import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
+import br.com.alex.orgs.databinding.FormularioImagemBinding
+import coil.load
 
 class FormProdutoActivity : AppCompatActivity() {
 
@@ -17,23 +19,31 @@ class FormProdutoActivity : AppCompatActivity() {
         ActivityFormProdutoBinding.inflate(layoutInflater)
 
     }
+    private var url: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoSalvar()
-        binding.activityFormProdutoImage.setOnClickListener(){
+        binding.activityFormProdutoImage.setOnClickListener() {
+            val bindinFormularioImagen = FormularioImagemBinding.inflate(layoutInflater)
+            bindinFormularioImagen.formularioImagemBotaoCarregar.setOnClickListener() {
+                val url = bindinFormularioImagen.formularioImagemUrl.text.toString()
+                bindinFormularioImagen.formularioImagemImageView.load(url)
+            }
             AlertDialog.Builder(this)
-                .setView(R.layout.formulario_imagem)
-                .setPositiveButton("Confirmar"){_,_ ->
+                .setView(bindinFormularioImagen.root)
+                .setPositiveButton("Confirmar") { _, _ ->
+                    url = bindinFormularioImagen.formularioImagemUrl.text.toString()
+                    binding.activityFormProdutoImage.load(url)
+                }
+                .setNegativeButton("Cancelar") { _, _ ->
 
                 }
-                .setNegativeButton("Cancelar"){ _,_ ->
-
-                }
+                .show()
         }
-
     }
+
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = findViewById<Button>(R.id.activity_form_produto_botao_salvar)
@@ -61,7 +71,8 @@ class FormProdutoActivity : AppCompatActivity() {
         return Produto(
             nome = nome,
             descricao = descricao,
-            valor = valor
+            valor = valor,
+            image = url
         )
     }
 
