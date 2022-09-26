@@ -11,6 +11,8 @@ import br.com.alex.orgs.model.Produto
 import java.math.BigDecimal
 import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
 import br.com.alex.orgs.databinding.FormularioImagemBinding
+import br.com.alex.orgs.extensions.tentaCarregarImagem
+import br.com.alex.orgs.ui.dialog.FormImagemDialog
 import coil.load
 
 class FormProdutoActivity : AppCompatActivity() {
@@ -26,21 +28,11 @@ class FormProdutoActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraBotaoSalvar()
         binding.activityFormProdutoImage.setOnClickListener() {
-            val bindinFormularioImagen = FormularioImagemBinding.inflate(layoutInflater)
-            bindinFormularioImagen.formularioImagemBotaoCarregar.setOnClickListener() {
-                val url = bindinFormularioImagen.formularioImagemUrl.text.toString()
-                bindinFormularioImagen.formularioImagemImageView.load(url)
-            }
-            AlertDialog.Builder(this)
-                .setView(bindinFormularioImagen.root)
-                .setPositiveButton("Confirmar") { _, _ ->
-                    url = bindinFormularioImagen.formularioImagemUrl.text.toString()
-                    binding.activityFormProdutoImage.load(url)
+            FormImagemDialog(this)
+                .Mostra{imagem ->
+                    url = imagem
+                    binding.activityFormProdutoImage.tentaCarregarImagem(url)
                 }
-                .setNegativeButton("Cancelar") { _, _ ->
-
-                }
-                .show()
         }
     }
 

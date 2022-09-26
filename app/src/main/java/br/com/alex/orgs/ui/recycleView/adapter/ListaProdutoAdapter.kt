@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.alex.orgs.R
 import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.databinding.ProdutoItemBinding
+import br.com.alex.orgs.extensions.tentaCarregarImagem
 import coil.load
 import java.util.*
 
@@ -35,11 +36,12 @@ class ListaProdutoAdapter(
                 .getCurrencyInstance(Locale("pt","br"))
             val valorEmMoeda = formatador.format(produto.valor)
             valor.text = valorEmMoeda
-
-            binding.imageView.load(produto.image){
-                fallback(R.drawable.imagem_padrao)
-                error(R.drawable.imagem_padrao)
+            val visibilidade = if(produto.image != null){
+                View.VISIBLE
+            }else{
+                View.GONE
             }
+            binding.imageView.tentaCarregarImagem(produto.image)
 
         }
     }
