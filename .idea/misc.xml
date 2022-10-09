@@ -5,7 +5,9 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.2694746376811594" />
         <entry key="app/src/main/res/drawable/placeholder.xml" value="0.1885" />
+        <entry key="app/src/main/res/drawable/plano_de_fundo_arredondado.xml" value="0.189" />
         <entry key="app/src/main/res/drawable/plano_de_fundo_produto.xml" value="0.2975" />
+        <entry key="app/src/main/res/layout/activity_detalhes_produto.xml" value="0.2954253954681488" />
         <entry key="app/src/main/res/layout/activity_form_produto.xml" value="0.2477355072463768" />
         <entry key="app/src/main/res/layout/activity_lista_produtos.xml" value="0.2477355072463768" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />

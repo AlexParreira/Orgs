@@ -26,10 +26,11 @@ class FormProdutoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = "Cadastrar Produto"
         configuraBotaoSalvar()
         binding.activityFormProdutoImage.setOnClickListener() {
             FormImagemDialog(this)
-                .Mostra(url){imagem ->
+                .Mostra(url) { imagem ->
                     url = imagem
                     binding.activityFormProdutoImage.tentaCarregarImagem(url)
                 }
