@@ -3,13 +3,14 @@ package br.com.alex.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import br.com.alex.orgs.R
 import br.com.alex.orgs.database.AppDatabase
 import br.com.alex.orgs.databinding.ActivityListaProdutosBinding
 import br.com.alex.orgs.ui.recycleView.adapter.ListaProdutoAdapter
 
-
+private const val TAG = "ListaProdutosActivity"
 class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos) {
 
     private val adapter = ListaProdutoAdapter(context = this)
@@ -58,6 +59,12 @@ class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos
                 putExtra(CHAVE_PRODUTO, it)
             }
             startActivity(intent)
+        }
+        adapter.quandoClicarEmEditar = {
+            Log.i(TAG,"configuraRecyclerView: Editar $it")
+        }
+        adapter.quandoClicarEmRemover = {
+            Log.i(TAG,"configuraRecyclerView: Remover $it")
         }
     }
 }

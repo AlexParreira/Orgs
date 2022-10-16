@@ -1,33 +1,34 @@
 package br.com.alex.orgs.ui.recycleView.adapter
 
 import android.content.Context
-import android.icu.text.NumberFormat
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alex.orgs.R
-import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.databinding.ProdutoItemBinding
 import br.com.alex.orgs.extensions.tentaCarregarImagem
+import br.com.alex.orgs.model.Produto
 import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
-import coil.load
-import java.util.*
 
 class ListaProdutoAdapter(
     private val context: Context,
     produtos: List<Produto> = emptyList(),
-    var quandoClicaNoItem: (produto: Produto) -> Unit = {}
+    var quandoClicaNoItem: (produto: Produto) -> Unit = {},
+    var quandoClicarEmEditar: (produto: Produto) -> Unit = {},
+    var quandoClicarEmRemover: (produto: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutoAdapter.ViewHolder>() {
 
     private val produtos = produtos.toMutableList()
 
     inner class ViewHolder(private val binding: ProdutoItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), PopupMenu.OnMenuItemClickListener {
         private lateinit var produto: Produto
+
 
         init {
             itemView.setOnClickListener {
@@ -35,9 +36,19 @@ class ListaProdutoAdapter(
                     quandoClicaNoItem(produto)
                 }
             }
+            itemView.setOnLongClickListener {
+                PopupMenu(context, itemView).apply {
+                    menuInflater.inflate(
+                        R.menu.menu_detalhes_produtos, menu
+                    )
+                    setOnMenuItemClickListener(this@ViewHolder)
+                }.show()
+                true
+            }
+
 
         }
-        
+
         @RequiresApi(Build.VERSION_CODES.N)
         fun vincula(produto: Produto) {
             this.produto = produto
@@ -56,6 +67,20 @@ class ListaProdutoAdapter(
             }
             binding.imageView.tentaCarregarImagem(produto.image)
 
+        }
+
+        override fun onMenuItemClick(item: MenuItem?): Boolean {
+            item?.let {
+                when (it.itemId) {
+                    R.id.menu_detalhe_editar -> {
+                        quandoClicarEmEditar(produto)
+                    }
+                    R.id.menu_detalhe_remover -> {
+                        quandoClicarEmRemover(produto)
+                    }
+                }
+            }
+            return true
         }
     }
 

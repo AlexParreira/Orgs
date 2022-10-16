@@ -1,6 +1,7 @@
 package br.com.alex.orgs.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import br.com.alex.orgs.model.Produto
@@ -14,4 +15,7 @@ interface ProdutoDao {
 
     @Insert
     fun salva(vararg produto: Produto)
+
+    @Delete
+    fun remove(produto: Produto)
 }
