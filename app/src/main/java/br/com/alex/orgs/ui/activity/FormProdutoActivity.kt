@@ -1,19 +1,16 @@
 package br.com.alex.orgs.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import br.com.alex.orgs.R
-import br.com.alex.orgs.dao.ProdutoDao
-import br.com.alex.orgs.model.Produto
-import java.math.BigDecimal
+import br.com.alex.orgs.database.AppDatabase
 import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
-import br.com.alex.orgs.databinding.FormularioImagemBinding
 import br.com.alex.orgs.extensions.tentaCarregarImagem
+import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.ui.dialog.FormImagemDialog
-import coil.load
+import java.math.BigDecimal
 
 class FormProdutoActivity : AppCompatActivity() {
 
@@ -40,10 +37,11 @@ class FormProdutoActivity : AppCompatActivity() {
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = findViewById<Button>(R.id.activity_form_produto_botao_salvar)
-        val dao = ProdutoDao()
+        val db = AppDatabase.instacia(this)
+        val produtoDao = db.produtoDao()
         botaoSalvar.setOnClickListener {
-            val produtoNovo = criaProduto()
-            dao.adicionar(produtoNovo)
+            val produtoNoco = criaProduto()
+            produtoDao.salva(produtoNoco)
             finish()
         }
     }

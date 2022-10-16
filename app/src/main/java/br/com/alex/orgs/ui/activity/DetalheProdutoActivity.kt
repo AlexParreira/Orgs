@@ -1,21 +1,11 @@
 package br.com.alex.orgs.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import br.com.alex.orgs.R
-import br.com.alex.orgs.dao.ProdutoDao
+import androidx.appcompat.app.AppCompatActivity
 import br.com.alex.orgs.databinding.ActivityDetalhesProdutoBinding
-import br.com.alex.orgs.model.Produto
-import java.math.BigDecimal
-import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
-import br.com.alex.orgs.databinding.FormularioImagemBinding
 import br.com.alex.orgs.extensions.tentaCarregarImagem
-import br.com.alex.orgs.ui.dialog.FormImagemDialog
+import br.com.alex.orgs.model.Produto
 import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
-import coil.load
 
 class DetalheProdutoActivity : AppCompatActivity() {
 
