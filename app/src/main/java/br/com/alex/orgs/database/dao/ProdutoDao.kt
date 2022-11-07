@@ -1,9 +1,6 @@
 package br.com.alex.orgs.database.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import br.com.alex.orgs.model.Produto
 
 
@@ -18,4 +15,11 @@ interface ProdutoDao {
 
     @Delete
     fun remove(produto: Produto)
+
+    @Update
+    fun atualiza(produto: Produto)
+
+
+    @Query("SELECT * FROM Produto WHERE id = :id")
+    fun buxarPorId(id: Long) :Produto?
 }
