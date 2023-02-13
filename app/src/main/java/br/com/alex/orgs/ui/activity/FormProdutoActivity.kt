@@ -1,58 +1,98 @@
 package br.com.alex.orgs.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alex.orgs.R
-import br.com.alex.orgs.dao.ProdutoDao
-import br.com.alex.orgs.model.Produto
-import java.math.BigDecimal
+import br.com.alex.orgs.database.AppDatabase
+import br.com.alex.orgs.database.dao.ProdutoDao
 import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
-import br.com.alex.orgs.databinding.FormularioImagemBinding
 import br.com.alex.orgs.extensions.tentaCarregarImagem
+import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.ui.dialog.FormImagemDialog
-import coil.load
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class FormProdutoActivity : AppCompatActivity() {
 
     private val binding by lazy {
         ActivityFormProdutoBinding.inflate(layoutInflater)
-
     }
     private var url: String? = null
+    private var produtoId = 0L
+    private val produtoDao: ProdutoDao by lazy {
+        val db = AppDatabase.instacia(this)
+        db.produtoDao()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = "Cadastrar produto"
         configuraBotaoSalvar()
-        binding.activityFormProdutoImage.setOnClickListener() {
+        binding.activityFormProdutoImage.setOnClickListener {
             FormImagemDialog(this)
-                .Mostra(url){imagem ->
+                .Mostra(url) { imagem ->
                     url = imagem
                     binding.activityFormProdutoImage.tentaCarregarImagem(url)
                 }
         }
+        tentaCarregarProduto()
     }
 
+    private fun tentaCarregarProduto() {
+        produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tentaBuscarProduto()
+    }
+
+    private fun tentaBuscarProduto() {
+        lifecycleScope.launch {
+            produtoDao.buscarPorId(produtoId).collect {
+                it?.let { produtoEncontrado ->
+                    title = "Alterar produto"
+                    preencheCampos(produtoEncontrado)
+                }
+            }
+        }
+    }
+
+    private fun preencheCampos(produto: Produto) {
+        url = produto.image
+        binding.activityFormProdutoImage
+            .tentaCarregarImagem(produto.image)
+        binding.activityFormProdutoNome
+            .setText(produto.nome)
+        binding.activityFormProdutoDescricao
+            .setText(produto.descricao)
+        binding.activityFormProdutoValor
+            .setText(produto.valor.toPlainString())
+    }
 
     private fun configuraBotaoSalvar() {
-        val botaoSalvar = findViewById<Button>(R.id.activity_form_produto_botao_salvar)
-        val dao = ProdutoDao()
+        val botaoSalvar = binding.activityFormProdutoBotaoSalvar
+
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-            dao.adicionar(produtoNovo)
-            finish()
+            lifecycleScope.launch {
+                produtoDao.salva(produtoNovo)
+                finish()
+            }
         }
     }
 
     private fun criaProduto(): Produto {
-        val campoNome = findViewById<EditText>(R.id.activity_form_produto_nome)
+        val campoNome = binding.activityFormProdutoNome
         val nome = campoNome.text.toString()
-        val campoDescricao = findViewById<EditText>(R.id.activity_form_produto_descricao)
+        val campoDescricao = binding.activityFormProdutoDescricao
         val descricao = campoDescricao.text.toString()
-        var campoValor = findViewById<EditText>(R.id.activity_form_produto_valor)
+        val campoValor = binding.activityFormProdutoValor
         val valorEmTexto = campoValor.text.toString()
         val valor = if (valorEmTexto.isBlank()) {
             BigDecimal.ZERO
@@ -61,11 +101,11 @@ class FormProdutoActivity : AppCompatActivity() {
         }
 
         return Produto(
+            id = produtoId,
             nome = nome,
             descricao = descricao,
             valor = valor,
             image = url
         )
     }
-
 }
