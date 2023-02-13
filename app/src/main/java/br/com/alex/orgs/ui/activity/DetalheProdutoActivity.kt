@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.alex.orgs.R
 import br.com.alex.orgs.database.AppDatabase
 import br.com.alex.orgs.databinding.ActivityDetalhesProdutoBinding
 import br.com.alex.orgs.extensions.tentaCarregarImagem
 import br.com.alex.orgs.model.Produto
 import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class DetalheProdutoActivity : AppCompatActivity() {
 
@@ -34,23 +37,34 @@ class DetalheProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        BuscaProduto()
+        buscaProduto()
     }
 
-    private fun BuscaProduto() {
-        produto = produtoDao.buxarPorId(produtoId)
-        produto?.let {
-            preencheCampos(it)
-        } ?: finish()
+    private fun buscaProduto() {
+        lifecycleScope.launch {
+            produtoDao.buscarPorId(produtoId).collect { produtoEncontrado ->
+                produto = produtoEncontrado
+                produto?.let {
+                    preencheCampos(it)
+                } ?: finish()
+            }
+        }
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_detalhes_produtos, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.menu_detalhe_remover -> {
                     produto?.let {
-                        produtoDao.remove(it)
+                        lifecycleScope.launch() {
+                            produtoDao.remove(it)
+                            finish()
+                        }
                     }
-                    finish()
+
                 }
                 R.id.menu_detalhe_editar -> {
                     Intent(this, FormProdutoActivity::class.java).apply {
@@ -66,10 +80,6 @@ class DetalheProdutoActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_detalhes_produtos, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
     private fun tentaCarregarProduto() {
         produtoId = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
