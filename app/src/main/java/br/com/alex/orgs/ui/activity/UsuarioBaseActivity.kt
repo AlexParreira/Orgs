@@ -27,8 +27,8 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
         }
     }
 
-    private var _usuario: MutableStateFlow<Usuario?> = MutableStateFlow(null)
-    protected var usuario: StateFlow<Usuario?> = _usuario
+    private val _usuario: MutableStateFlow<Usuario?> = MutableStateFlow(null)
+    protected val usuario: StateFlow<Usuario?> = _usuario
 
     private suspend fun VerificaUsuarioLogado() {
         dataStore.data.collect { preferences ->
@@ -38,10 +38,12 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun buscaUsuario(usuarioId: String) {
-            _usuario.value = usuarioDao
+    private suspend fun buscaUsuario(usuarioId: String) : Usuario? {
+            return usuarioDao
                 .buscaPorID(usuarioId)
-                .firstOrNull()
+                .firstOrNull().also {
+                    _usuario.value = it
+                }
     }
 
     protected suspend fun deslogaUsuario() {

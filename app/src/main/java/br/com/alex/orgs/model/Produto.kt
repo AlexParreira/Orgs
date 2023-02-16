@@ -13,7 +13,8 @@ data class Produto(
     val nome: String,
     val descricao: String,
     val valor: BigDecimal,
-    val image : String? = null
+    val image : String? = null,
+    val usuarioID: String? = null
 ) :Parcelable
 
 

@@ -13,12 +13,7 @@ import br.com.alex.orgs.model.Usuario
 
 
 @Database(
-    entities = [
-        Produto::class,
-        Usuario::class
-               ],
-    version = 2,
-    exportSchema = true
+    entities = [Produto::class, Usuario::class], version = 3, exportSchema = true
 )
 
 @TypeConverters(Converter::class)
@@ -30,15 +25,15 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var db: AppDatabase? = null
-        fun instacia(context: Context):AppDatabase {
+        fun instacia(context: Context): AppDatabase {
             return db ?: Room.databaseBuilder(
-                context,
-                AppDatabase::class.java,
-                "orgs.db"
-            ).addMigrations(MIGRATION_1_2)
-                .build(). also {
-                    db = it
-                }
+                context, AppDatabase::class.java, "orgs.db"
+            ).addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3
+            ).build().also {
+                db = it
+            }
         }
     }
 }

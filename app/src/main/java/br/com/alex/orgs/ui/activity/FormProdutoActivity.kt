@@ -13,6 +13,7 @@ import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.ui.dialog.FormImagemDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -41,13 +42,6 @@ class FormProdutoActivity : UsuarioBaseActivity() {
                 }
         }
         tentaCarregarProduto()
-        lifecycleScope.launch{
-            usuario
-            .filterNotNull()
-            .collect{
-                Log.i("FormularioProduto","onCreate: $it")
-            }
-        }
     }
 
     private fun tentaCarregarProduto() {
@@ -86,15 +80,19 @@ class FormProdutoActivity : UsuarioBaseActivity() {
         val botaoSalvar = binding.activityFormProdutoBotaoSalvar
 
         botaoSalvar.setOnClickListener {
-            val produtoNovo = criaProduto()
+
             lifecycle.coroutineScope.launch {
-                produtoDao.salva(produtoNovo)
-                finish()
+                usuario.firstOrNull()?.let{usuario ->
+                    val produtoNovo = criaProduto(usuario.id)
+                    produtoDao.salva(produtoNovo)
+                    finish()
+
+                }
             }
         }
     }
 
-    private fun criaProduto(): Produto {
+    private fun criaProduto(usuarioID:String): Produto {
         val campoNome = binding.activityFormProdutoNome
         val nome = campoNome.text.toString()
         val campoDescricao = binding.activityFormProdutoDescricao
@@ -112,7 +110,9 @@ class FormProdutoActivity : UsuarioBaseActivity() {
             nome = nome,
             descricao = descricao,
             valor = valor,
-            image = url
+            image = url,
+            usuarioID = usuarioID
+
         )
     }
 }
