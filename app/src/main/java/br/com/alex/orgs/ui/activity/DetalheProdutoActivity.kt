@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.coroutineScope
 import br.com.alex.orgs.R
 import br.com.alex.orgs.database.AppDatabase
 import br.com.alex.orgs.databinding.ActivityDetalhesProdutoBinding
@@ -41,7 +41,7 @@ class DetalheProdutoActivity : AppCompatActivity() {
     }
 
     private fun buscaProduto() {
-        lifecycleScope.launch {
+        lifecycle.coroutineScope.launch {
             produtoDao.buscarPorId(produtoId).collect { produtoEncontrado ->
                 produto = produtoEncontrado
                 produto?.let {
@@ -59,7 +59,7 @@ class DetalheProdutoActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.menu_detalhe_remover -> {
                     produto?.let {
-                        lifecycleScope.launch() {
+                        lifecycle.coroutineScope.launch() {
                             produtoDao.remove(it)
                             finish()
                         }

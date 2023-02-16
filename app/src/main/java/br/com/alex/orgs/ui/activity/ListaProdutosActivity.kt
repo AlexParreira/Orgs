@@ -8,32 +8,30 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import br.com.alex.orgs.R
 import br.com.alex.orgs.database.AppDatabase
-import br.com.alex.orgs.database.dao.UsuarioDao
 import br.com.alex.orgs.databinding.ActivityListaProdutosBinding
 import br.com.alex.orgs.extensions.vaiPara
-import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.preferences.dataStore
 import br.com.alex.orgs.preferences.usuarioLogadoPreferences
 import br.com.alex.orgs.ui.recycleView.adapter.ListaProdutoAdapter
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 private const val TAG = "ListaProdutosActivity"
 
-class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos) {
+class ListaProdutosActivity : UsuarioBaseActivity() {
 
     private val adapter = ListaProdutoAdapter(context = this)
     private val binding by lazy {
         ActivityListaProdutosBinding
             .inflate(layoutInflater)
     }
-    private val usuarioDao by lazy {
-        AppDatabase.instacia(this)
-            .usuarioDao()
-    }
+
     private val produtoDao by lazy {
         AppDatabase.instacia(this)
             .produtoDao()
@@ -44,27 +42,26 @@ class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos
         setContentView(binding.root)
         configuraRecicleView()
         configuraFab()
-        lifecycleScope.launch {
+        lifecycle.coroutineScope.launch {
+
             launch {
-                produtoDao.buscaTodos().collect { produtos ->
-                    adapter.atualiza(produtos)
+                usuario
+                    .filterNotNull()
+                    .collect {
+                        Log.i("ListaProdutos","onCreate: $it")
+                    buscaProdutoUsuario()
                 }
             }
-
-            launch{
-                dataStore.data.collect { preferences ->
-                    preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                        launch {
-                            usuarioDao.buscaPorID(usuarioId).collect {
-                                Log.i("ListaProdutos", "onCreate: $it")
-                            }
-                        }
-                    } ?: vaiParaLogin()
-
-                }
-            }
+        }
+    }
 
 
+
+
+
+    private suspend fun buscaProdutoUsuario() {
+        produtoDao.buscaTodos().collect { produtos ->
+            adapter.atualiza(produtos)
         }
     }
 
@@ -75,16 +72,16 @@ class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.menu_lista_produtos_ordenar ->{
-                lifecycleScope.launch{
-                    dataStore.edit { preferences ->
-                        preferences.remove(usuarioLogadoPreferences)
-                    }
+            R.id.menu_lista_produtos_ordenar -> {
+                lifecycle.coroutineScope.launch {
+                    deslogaUsuario()
                 }
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
+
 /*
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val produtosOrdenado: List<Produto>? = when (item.itemId) {
@@ -111,10 +108,7 @@ class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos
     }
 */
 
-    private fun vaiParaLogin(){
-        vaiPara(LoginActivity::class.java)
-        finish()
-    }
+
     private fun configuraFab() {
         val fab = binding.activityListaProdutosFloatingActionButton
         fab.setOnClickListener {

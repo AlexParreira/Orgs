@@ -1,11 +1,10 @@
 package br.com.alex.orgs.ui.activity
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
-import br.com.alex.orgs.R
 import br.com.alex.orgs.database.AppDatabase
 import br.com.alex.orgs.database.dao.ProdutoDao
 import br.com.alex.orgs.databinding.ActivityFormProdutoBinding
@@ -13,10 +12,11 @@ import br.com.alex.orgs.extensions.tentaCarregarImagem
 import br.com.alex.orgs.model.Produto
 import br.com.alex.orgs.ui.dialog.FormImagemDialog
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-class FormProdutoActivity : AppCompatActivity() {
+class FormProdutoActivity : UsuarioBaseActivity() {
 
     private val binding by lazy {
         ActivityFormProdutoBinding.inflate(layoutInflater)
@@ -41,6 +41,13 @@ class FormProdutoActivity : AppCompatActivity() {
                 }
         }
         tentaCarregarProduto()
+        lifecycleScope.launch{
+            usuario
+            .filterNotNull()
+            .collect{
+                Log.i("FormularioProduto","onCreate: $it")
+            }
+        }
     }
 
     private fun tentaCarregarProduto() {
@@ -53,7 +60,7 @@ class FormProdutoActivity : AppCompatActivity() {
     }
 
     private fun tentaBuscarProduto() {
-        lifecycleScope.launch {
+        lifecycle.coroutineScope.launch {
             produtoDao.buscarPorId(produtoId).collect {
                 it?.let { produtoEncontrado ->
                     title = "Alterar produto"
@@ -80,7 +87,7 @@ class FormProdutoActivity : AppCompatActivity() {
 
         botaoSalvar.setOnClickListener {
             val produtoNovo = criaProduto()
-            lifecycleScope.launch {
+            lifecycle.coroutineScope.launch {
                 produtoDao.salva(produtoNovo)
                 finish()
             }
